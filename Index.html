@@ -1,0 +1,2556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momentum - Habit Tracker</title>
+    <link rel="icon" type="image/jpeg" href="https://agi-prod-file-upload-public-main-use1.s3.amazonaws.com/94d2c1a2-61ea-41c1-a77c-4ea7910b2da5">
+    <style>
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-cream-100: rgba(255, 255, 253, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-gray-300: rgba(200, 200, 200, 1);
+            --color-gray-400: rgba(150, 150, 150, 1);
+            --color-gray-500: rgba(120, 120, 120, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-slate-900: rgba(30, 35, 40, 1);
+            --color-charcoal-700: rgba(50, 55, 60, 1);
+            --color-charcoal-800: rgba(40, 45, 50, 1);
+            
+            --color-blue-300: rgba(100, 180, 255, 1);
+            --color-blue-400: rgba(70, 150, 240, 1);
+            --color-blue-500: rgba(50, 130, 220, 1);
+            --color-blue-600: rgba(35, 100, 200, 1);
+            
+            --color-purple-300: rgba(180, 100, 255, 1);
+            --color-purple-400: rgba(160, 70, 240, 1);
+            --color-purple-500: rgba(140, 50, 220, 1);
+            
+            --color-teal-300: rgba(50, 220, 200, 1);
+            --color-teal-400: rgba(30, 200, 180, 1);
+            --color-teal-500: rgba(20, 180, 160, 1);
+            --color-teal-600: rgba(15, 150, 135, 1);
+            
+            --color-amber-300: rgba(255, 200, 80, 1);
+            --color-amber-400: rgba(255, 170, 40, 1);
+            --color-green-300: rgba(100, 220, 120, 1);
+            --color-green-500: rgba(60, 200, 80, 1);
+            
+            --color-coral-300: rgba(255, 140, 120, 1);
+            --color-coral-400: rgba(255, 100, 70, 1);
+            --color-pink-300: rgba(255, 120, 180, 1);
+            --color-pink-400: rgba(240, 80, 160, 1);
+            
+            --color-category-health: var(--color-coral-400);
+            --color-category-learning: var(--color-blue-500);
+            --color-category-productivity: var(--color-purple-500);
+            --color-category-mindfulness: var(--color-teal-500);
+            --color-category-creativity: var(--color-pink-400);
+            --color-category-other: var(--color-green-500);
+            
+            --color-bg: var(--color-cream-50);
+            --color-surface: var(--color-white);
+            --color-text: var(--color-slate-900);
+            --color-text-secondary: var(--color-gray-500);
+            --color-text-muted: var(--color-gray-400);
+            --color-primary: rgba(106, 135, 108, 1);
+            --color-primary-hover: rgba(86, 115, 88, 1);
+            --color-primary-light: rgba(106, 135, 108, 0.12);
+            --color-border: rgba(0, 0, 0, 0.08);
+            --color-complete: var(--color-teal-500);
+            --color-complete-light: rgba(20, 180, 160, 0.15);
+            --color-missed: var(--color-gray-300);
+            --color-missed-light: rgba(200, 200, 200, 0.08);
+            --color-amber: var(--color-coral-400);
+            --color-amber-light: rgba(255, 100, 70, 0.15);
+            
+            --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            --font-family-mono: 'SF Mono', Monaco, Consolas, monospace;
+            
+            --space-4: 4px;
+            --space-8: 8px;
+            --space-12: 12px;
+            --space-16: 16px;
+            --space-20: 20px;
+            --space-24: 24px;
+            --space-32: 32px;
+            
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg: var(--color-charcoal-700);
+                --color-surface: var(--color-charcoal-800);
+                --color-text: rgba(240, 240, 240, 1);
+                --color-text-secondary: var(--color-gray-400);
+                --color-text-muted: var(--color-gray-300);
+                --color-border: rgba(255, 255, 255, 0.1);
+                --color-primary-light: rgba(50, 130, 220, 0.15);
+                --color-complete-light: rgba(50, 220, 200, 0.15);
+                --color-missed-light: rgba(150, 150, 150, 0.1);
+                --color-amber-light: rgba(255, 100, 70, 0.15);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family-base);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 70px;
+        }
+
+        .app-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(252, 252, 249, 1);
+            border-top: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 70px;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-4);
+            flex: 1;
+            height: 100%;
+            cursor: pointer;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: color 150ms ease;
+            border: none;
+            background: none;
+            padding: 0;
+        }
+
+        .nav-item:hover {
+            color: var(--color-primary);
+        }
+
+        .nav-item.active {
+            color: var(--color-primary);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            margin-bottom: var(--space-4);
+            opacity: 0.8;
+            transition: opacity 150ms ease;
+        }
+
+        .nav-item.active .nav-logo {
+            opacity: 1;
+        }
+
+        .nav-item:hover .nav-logo {
+            opacity: 1;
+        }
+
+        .tab-content {
+            display: none;
+            padding: var(--space-20);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Header */
+        .header {
+            padding: var(--space-20);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .header-subtitle {
+            margin: var(--space-8) 0 0 0;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        /* Habit Cards */
+        .habits-container {
+            display: grid;
+            gap: var(--space-16);
+        }
+
+        .habit-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-16);
+            display: flex;
+            gap: var(--space-16);
+            align-items: flex-start;
+            transition: all 150ms ease;
+            cursor: pointer;
+        }
+
+        .habit-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .habit-card.completed {
+            background: var(--color-complete-light);
+            border-color: var(--color-complete);
+        }
+
+        .habit-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .habit-name {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .habit-meta {
+            margin: var(--space-8) 0 0 0;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+            display: flex;
+            gap: var(--space-12);
+            flex-wrap: wrap;
+        }
+
+        .habit-momentum {
+            display: inline-block;
+            padding: var(--space-4) var(--space-8);
+            background: var(--color-primary-light);
+            color: var(--color-primary);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .habit-momentum.strong {
+            background: rgba(100, 220, 120, 0.2);
+            color: var(--color-green-500);
+        }
+
+        .habit-momentum.stable {
+            background: rgba(50, 220, 200, 0.2);
+            color: var(--color-teal-300);
+        }
+
+        .habit-momentum.slipping {
+            background: rgba(255, 100, 70, 0.2);
+            color: var(--color-coral-400);
+        }
+
+        .habit-momentum.recovering {
+            background: rgba(180, 100, 255, 0.2);
+            color: var(--color-purple-300);
+        }
+
+        .habit-button {
+            padding: var(--space-8) var(--space-16);
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease;
+            white-space: nowrap;
+            min-width: 80px;
+            height: fit-content;
+        }
+
+        .habit-button:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .habit-button:active {
+            transform: translateY(0);
+        }
+
+        .habit-button.completed {
+            background: var(--color-complete);
+        }
+
+        .habit-button.completed:hover {
+            background: rgba(80, 170, 80, 0.85);
+        }
+
+        /* Completion indicator */
+        .completion-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            background: rgba(100, 180, 255, 0.15);
+            color: var(--color-blue-400);
+            flex-shrink: 0;
+        }
+
+        .completion-indicator.completed {
+            background: rgba(50, 220, 200, 0.15);
+            color: var(--color-teal-300);
+        }
+
+        /* Calendar */
+        .calendar-container {
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            padding: var(--space-16);
+            margin-bottom: var(--space-16);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-16);
+        }
+
+        .calendar-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: var(--space-8);
+        }
+
+        .calendar-nav button {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: var(--space-8) var(--space-12);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+
+        .calendar-nav button:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: var(--space-8);
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            padding: var(--space-8);
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            background: var(--color-gray-200);
+            color: var(--color-text-muted);
+            border: 1px solid transparent;
+            transition: all 150ms ease;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .calendar-day {
+                background: rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.3;
+        }
+
+        .calendar-day.today {
+            border-color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .calendar-day.completed {
+            background: var(--color-complete-light);
+            color: var(--color-complete);
+            border-color: var(--color-complete);
+        }
+
+        .calendar-day.missed {
+            background: var(--color-missed-light);
+            color: var(--color-text-muted);
+        }
+
+        .calendar-day:hover {
+            border-color: var(--color-primary);
+        }
+
+        .day-detail {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-16);
+            margin-top: var(--space-16);
+        }
+
+        .day-detail-title {
+            margin: 0 0 var(--space-12) 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        .day-habits {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-8);
+        }
+
+        .day-habit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-12);
+            background: var(--color-gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .day-habit-item {
+                background: rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        .day-habit-item.completed {
+            background: var(--color-complete-light);
+            color: var(--color-complete);
+        }
+
+        .day-habit-item.missed {
+            background: var(--color-missed-light);
+        }
+
+        .day-habit-note {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-top: var(--space-4);
+            font-style: italic;
+        }
+
+        /* Progress Tab */
+        .date-range-picker {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-16);
+            margin-bottom: var(--space-16);
+            display: flex;
+            gap: var(--space-12);
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .date-input-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        .date-input-group input {
+            padding: var(--space-8) var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-size: 14px;
+            font-family: var(--font-family-base);
+        }
+
+        .date-input-group input:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: -1px;
+        }
+
+        .btn-small {
+            padding: var(--space-8) var(--space-16);
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease;
+            white-space: nowrap;
+        }
+
+        .btn-small:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .insights-section {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-16);
+            margin-bottom: var(--space-16);
+        }
+
+        .insights-title {
+            margin: 0 0 var(--space-16) 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+        }
+
+        .chart-container {
+            margin-bottom: var(--space-16);
+        }
+
+        .chart-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: var(--space-12);
+            color: var(--color-text);
+        }
+
+        .consistency-ring {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-16);
+            margin: var(--space-16) 0;
+        }
+
+        .ring-value {
+            font-size: 36px;
+            font-weight: 600;
+            color: var(--color-blue-500);
+        }
+
+        .ring-label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+        }
+
+        /* Settings Tab */
+        .settings-section {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--space-16);
+            margin-bottom: var(--space-16);
+        }
+
+        .settings-section-title {
+            margin: 0 0 var(--space-16) 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-12) 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .setting-description {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-top: var(--space-4);
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--color-gray-300);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 150ms ease;
+            border: none;
+            padding: 0;
+        }
+
+        .toggle.active {
+            background: var(--color-primary);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 150ms ease;
+        }
+
+        .toggle.active::after {
+            left: 22px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-16);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-24);
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin: 0 0 var(--space-20) 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: var(--space-16);
+            right: var(--space-16);
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--color-text-secondary);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-16);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-8);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-size: 14px;
+            font-family: var(--font-family-base);
+        }
+
+        .form-input:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: -1px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-size: 14px;
+            font-family: var(--font-family-base);
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--space-8);
+            margin: var(--space-8) 0;
+        }
+
+        .form-checkbox input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--color-primary);
+        }
+
+        .form-checkbox label {
+            cursor: pointer;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: var(--space-12);
+            margin-top: var(--space-24);
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: var(--space-12);
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: var(--space-12);
+            background: var(--color-gray-200);
+            color: var(--color-text);
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .btn-secondary {
+                background: rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-gray-300);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-32) var(--space-16);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: var(--space-16);
+        }
+
+        .empty-state-title {
+            margin: 0 0 var(--space-8) 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .empty-state-description {
+            margin: 0 0 var(--space-16) 0;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+
+        .btn-add-habit {
+            padding: var(--space-12) var(--space-24);
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 150ms ease;
+            inline-size: fit-content;
+        }
+
+        .btn-add-habit:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .btn-add-habit:active {
+            transform: translateY(1px);
+        }
+
+        /* Note Input */
+        .note-input {
+            width: 100%;
+            padding: var(--space-12);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-size: 13px;
+            font-family: var(--font-family-base);
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .note-input:focus {
+            outline: 2px solid var(--color-primary);
+            outline-offset: -1px;
+        }
+
+        .top-bar {
+            padding: var(--space-16) var(--space-20);
+            background: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .add-habit-floating {
+            position: fixed;
+            bottom: 90px;
+            right: var(--space-20);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 150ms ease;
+            z-index: 99;
+        }
+
+        .add-habit-floating:hover {
+            background: var(--color-primary-hover);
+            transform: scale(1.1);
+        }
+
+        .add-habit-floating:active {
+            transform: scale(0.95);
+        }
+
+        /* Bar Chart */
+        .bar-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: var(--space-8);
+            align-items: flex-end;
+            height: 120px;
+            margin: var(--space-12) 0;
+        }
+
+        .bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-4);
+            flex: 1;
+        }
+
+        .bar-fill {
+            width: 100%;
+            background: var(--color-primary);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            min-height: 4px;
+        }
+
+        .bar-label {
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            text-align: center;
+            width: 100%;
+        }
+
+        .line-chart-container {
+            position: relative;
+            height: 150px;
+            margin: var(--space-12) 0;
+            overflow: hidden;
+            background: var(--color-gray-200);
+            border-radius: var(--radius-sm);
+            padding: var(--space-12);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .line-chart-container {
+                background: rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        .line-chart-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .line-chart-line {
+            position: absolute;
+            bottom: 0;
+            width: 2px;
+            background: var(--color-primary);
+        }
+
+        .momentum-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            gap: var(--space-4);
+            align-items: flex-end;
+            height: 100px;
+            margin: var(--space-12) 0;
+        }
+
+        .momentum-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-4);
+            flex: 1;
+        }
+
+        .momentum-fill {
+            width: 100%;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            min-height: 2px;
+            transition: all 150ms ease;
+        }
+
+        .momentum-fill.strong {
+            background: rgba(100, 220, 120, 1);
+        }
+
+        .momentum-fill.stable {
+            background: rgba(50, 220, 200, 1);
+        }
+
+        .momentum-fill.slipping {
+            background: rgba(255, 100, 70, 1);
+        }
+
+        .momentum-fill.recovering {
+            background: rgba(180, 100, 255, 1);
+        }
+
+        .momentum-label {
+            font-size: 9px;
+            color: var(--color-text-secondary);
+            text-align: center;
+            width: 100%;
+        }
+
+        .consistency-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--color-primary) var(--consistency-percent), var(--color-gray-200) 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: var(--space-16) auto;
+            position: relative;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .consistency-circle {
+                background: conic-gradient(var(--color-primary) var(--consistency-percent), rgba(255, 255, 255, 0.1) 0);
+            }
+        }
+
+        .consistency-circle::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: var(--color-surface);
+            border-radius: 50%;
+        }
+
+        .consistency-circle-text {
+            position: absolute;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .consistency-circle-percent {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .consistency-circle-label {
+            font-size: 11px;
+            color: var(--color-text-secondary);
+        }
+
+        .color-picker {
+            width: 48px;
+            height: 48px;
+            border: 3px solid transparent;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 150ms ease;
+        }
+
+        .color-picker:hover {
+            transform: scale(1.05);
+        }
+
+        .color-picker.selected {
+            border-color: var(--color-text);
+            box-shadow: var(--shadow-md);
+        }
+
+        @media (max-width: 480px) {
+            .header-title {
+                font-size: 24px;
+            }
+
+            .habit-card {
+                flex-direction: column;
+                gap: var(--space-12);
+            }
+
+            .completion-indicator {
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
+            }
+
+            .date-range-picker {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .date-input-group input {
+                width: 100%;
+            }
+
+            .btn-small {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="app-content">
+            <!-- Home Tab -->
+            <div id="home-tab" class="tab-content active">
+                <div class="header">
+                    <div>
+                        <h1 class="header-title">Momentum</h1>
+                        <p class="header-subtitle" id="today-date">Today</p>
+                    </div>
+                    <button class="add-habit-floating" onclick="openAddHabitModal()" title="Add habit">+</button>
+                </div>
+
+                <div style="padding: 0 var(--space-20);">
+                    <div id="motivation-banner" style="display: none; background: var(--color-primary-light); border-radius: var(--radius-md); padding: var(--space-16); margin-bottom: var(--space-16); border-left: 4px solid var(--color-primary);">
+                        <p id="motivation-text" style="margin: 0; font-size: 14px; font-weight: 500; color: var(--color-primary);"></p>
+                    </div>
+                    <div id="habits-container" class="habits-container"></div>
+                    <div id="empty-home" class="empty-state" style="display: none;">
+                        <div class="empty-state-icon">-</div>
+                        <h3 class="empty-state-title">No habits yet</h3>
+                        <p class="empty-state-description">Start with 1-3 habits you want to build. Keep it simple and sustainable.</p>
+                        <button class="btn-add-habit" onclick="openAddHabitModal()">Add your first habit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Tab -->
+            <div id="calendar-tab" class="tab-content">
+                <div class="header">
+                    <h1 class="header-title">Calendar</h1>
+                </div>
+
+                <div style="padding: 0 var(--space-20);">
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <h3 id="calendar-month-year">Month Year</h3>
+                            <div class="calendar-nav">
+                                <button onclick="previousMonth()">Prev</button>
+                                <button onclick="nextMonth()">Next</button>
+                            </div>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid"></div>
+                    </div>
+
+                    <div id="day-detail" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Progress Tab -->
+            <div id="progress-tab" class="tab-content">
+                <div class="header">
+                    <h1 class="header-title">Progress</h1>
+                </div>
+
+                <div style="padding: 0 var(--space-20);">
+                    <div class="date-range-picker">
+                        <div class="date-input-group">
+                            <label>From</label>
+                            <input type="date" id="date-start" onchange="updateProgressInsights()">
+                        </div>
+                        <div class="date-input-group">
+                            <label>To</label>
+                            <input type="date" id="date-end" onchange="updateProgressInsights()">
+                        </div>
+                        <button class="btn-small" onclick="showAllTimeInsights()">All-Time</button>
+                    </div>
+
+                    <div id="progress-insights"></div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="tab-content">
+                <div class="header">
+                    <h1 class="header-title">Settings</h1>
+                </div>
+
+                <div style="padding: 0 var(--space-20);">
+                    <div class="settings-section">
+                        <h2 class="settings-section-title">Profile</h2>
+                        <div class="form-group">
+                            <label class="form-label">Your Name</label>
+                            <input type="text" id="user-name-input" class="form-input" placeholder="Enter your name" onchange="saveUserName()">
+                        </div>
+                        <p style="margin: var(--space-12) 0 0 0; font-size: 12px; color: var(--color-text-secondary);">Your name will be used for personalized greetings and motivation throughout the app.</p>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2 class="settings-section-title">Appearance</h2>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Dark Mode</div>
+                                <div class="setting-description">System default</div>
+                            </div>
+                            <button id="theme-toggle" class="toggle" onclick="toggleTheme()"></button>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2 class="settings-section-title">Notifications</h2>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Daily Reminders</div>
+                                <div class="setting-description">Gentle nudge at 8:00 AM</div>
+                            </div>
+                            <button id="notification-toggle" class="toggle active" onclick="toggleNotifications()"></button>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2 class="settings-section-title">Data</h2>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Export Data</div>
+                                <div class="setting-description">Download as JSON</div>
+                            </div>
+                            <button class="btn-small" onclick="exportData()">Export</button>
+                        </div>
+                        <div class="setting-item" style="margin-top: var(--space-16);">
+                            <div>
+                                <div class="setting-label">Clear All Data</div>
+                                <div class="setting-description">This cannot be undone</div>
+                            </div>
+                            <button class="btn-small" onclick="confirmClearData()" style="background: rgba(255, 84, 89, 0.2); color: rgba(255, 84, 89, 1);">Clear</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h2 class="settings-section-title">About</h2>
+                        <p style="margin: 0; font-size: 13px; color: var(--color-text-secondary);">
+                            Momentum v1.0<br>
+                            A momentum-based habit tracker focused on forgiveness, not perfection.<br><br>
+                            All data is stored locally on your device. No accounts, no ads, no tracking.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="app-nav">
+            <button class="nav-item active" onclick="switchTab('home-tab', this)">
+                <span>Home</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('calendar-tab', this)">
+                <span>Calendar</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('progress-tab', this)">
+                <span>Progress</span>
+            </button>
+            <button class="nav-item" onclick="switchTab('settings-tab', this)">
+                <span>Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Modal for Adding/Editing Habit -->
+    <div id="habit-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAddHabitModal()">&times;</button>
+            <h2 class="modal-header" id="modal-title">Add Habit</h2>
+
+            <form id="habit-form" onsubmit="saveHabit(event)">
+                <div class="form-group">
+                    <label class="form-label">Habit Name</label>
+                    <input type="text" id="habit-name" class="form-input" placeholder="e.g., Morning Run" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select id="habit-category" class="form-select" onchange="updateCategoryUI()">
+                        <option value="health">Health</option>
+                        <option value="learning">Learning</option>
+                        <option value="productivity">Productivity</option>
+                        <option value="mindfulness">Mindfulness</option>
+                        <option value="creativity">Creativity</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div id="custom-category" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Custom Category Name</label>
+                        <input type="text" id="habit-custom-category" class="form-input" placeholder="e.g., Social, Finance, Home">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category Color</label>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-8);">
+                            <button type="button" class="color-picker" style="background: rgba(255, 100, 70, 1);" onclick="selectCategoryColor(this, 'rgba(255, 100, 70, 1)')" title="Coral"></button>
+                            <button type="button" class="color-picker" style="background: rgba(50, 130, 220, 1);" onclick="selectCategoryColor(this, 'rgba(50, 130, 220, 1)')" title="Blue"></button>
+                            <button type="button" class="color-picker" style="background: rgba(140, 50, 220, 1);" onclick="selectCategoryColor(this, 'rgba(140, 50, 220, 1)')" title="Purple"></button>
+                            <button type="button" class="color-picker" style="background: rgba(20, 180, 160, 1);" onclick="selectCategoryColor(this, 'rgba(20, 180, 160, 1)')" title="Teal"></button>
+                            <button type="button" class="color-picker" style="background: rgba(240, 80, 160, 1);" onclick="selectCategoryColor(this, 'rgba(240, 80, 160, 1)')" title="Pink"></button>
+                            <button type="button" class="color-picker" style="background: rgba(60, 200, 80, 1);" onclick="selectCategoryColor(this, 'rgba(60, 200, 80, 1)')" title="Green"></button>
+                            <button type="button" class="color-picker" style="background: rgba(255, 200, 80, 1);" onclick="selectCategoryColor(this, 'rgba(255, 200, 80, 1)')" title="Amber"></button>
+                            <button type="button" class="color-picker" style="background: rgba(100, 180, 255, 1);" onclick="selectCategoryColor(this, 'rgba(100, 180, 255, 1)')" title="Sky"></button>
+                        </div>
+                        <input type="hidden" id="habit-custom-color" value="rgba(60, 200, 80, 1)">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Frequency</label>
+                    <select id="habit-frequency" class="form-select" onchange="updateFrequencyUI()">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                        <option value="custom-days">Specific Days</option>
+                        <option value="custom-number">Custom Days per Week</option>
+                    </select>
+                </div>
+
+                <div id="custom-days" style="display: none;">
+                    <label class="form-label">Select Days</label>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-8);">
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="day-mon" value="1">
+                            <label for="day-mon">Monday</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="day-tue" value="2">
+                            <label for="day-tue">Tuesday</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="day-wed" value="3">
+                            <label for="day-wed">Wednesday</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="day-thu" value="4">
+                            <label for="day-thu">Thursday</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="day-fri" value="5">
+                            <label for="day-fri">Friday</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="day-sat" value="6">
+                            <label for="day-sat">Saturday</label>
+                        </div>
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="day-sun" value="0">
+                            <label for="day-sun">Sunday</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="custom-number-days" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">How many days per week?</label>
+                        <input type="number" id="habit-custom-number" class="form-input" placeholder="e.g., 3" min="1" max="7">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Goal Type</label>
+                    <select id="habit-goal-type" class="form-select" onchange="updateGoalTypeUI()">
+                        <option value="yesno">Yes/No</option>
+                        <option value="numeric">Numeric</option>
+                    </select>
+                </div>
+
+                <div id="numeric-goal" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Goal Amount</label>
+                        <input type="number" id="habit-goal-amount" class="form-input" placeholder="e.g., 30" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unit</label>
+                        <input type="text" id="habit-goal-unit" class="form-input" placeholder="e.g., minutes, pages, reps">
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Save Habit</button>
+                    <button type="button" class="btn-secondary" onclick="closeAddHabitModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Completing Habit -->
+    <div id="complete-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCompleteModal()">&times;</button>
+            <h2 class="modal-header" id="complete-modal-title">Complete Habit</h2>
+
+            <form id="complete-form" onsubmit="confirmCompletion(event)">
+                <div id="numeric-input" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label" id="numeric-label">Amount</label>
+                        <input type="number" id="completion-amount" class="form-input" placeholder="0" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Reflection Note (optional)</label>
+                    <textarea id="completion-note" class="note-input" placeholder="How did it go? What did you notice?"></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Mark Complete</button>
+                    <button type="button" class="btn-secondary" onclick="closeCompleteModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Motivational phrases pool
+        const motivationalPhrases = [
+            "You've got this! Keep the momentum going.",
+            "Every small step counts. You're building something great.",
+            "Consistency is key. Let's show up today.",
+            "You're stronger than you think. Keep going!",
+            "Your future self will thank you for today's effort.",
+            "One day at a time. You're on the right track.",
+            "Progress over perfection. Let's do this!",
+            "Small wins add up to big changes.",
+            "You're doing better than you think.",
+            "This moment matters. Show up for yourself.",
+            "You're capable of amazing things.",
+            "Every habit starts with a single action.",
+            "Be patient with yourself. Growth takes time.",
+            "You're building discipline, one day at a time.",
+            "Success is the sum of small efforts.",
+            "Your effort today shapes your future.",
+            "You're closer to your goals than yesterday.",
+            "Keep going. You've already made it this far.",
+            "Trust the process. Results will come.",
+            "You're worth the effort. Make it count.",
+            "Small actions, big impact. That's your superpower.",
+            "Today is a fresh start. Make it yours.",
+            "You're not just going through the motions—you're building character.",
+            "Every completed habit is a win. Celebrate it.",
+            "Your consistency is your legacy.",
+            "You're training yourself to be unstoppable.",
+            "Momentum builds slowly, but it builds strong.",
+            "You're writing your success story, one day at a time.",
+            "This is what dedication looks like.",
+            "You're becoming the person you want to be.",
+            "Progress isn't always visible, but it's always happening.",
+            "You chose this. You can do this.",
+            "Your habits are sculpting your life.",
+            "Be proud of showing up, even on hard days.",
+            "You're breaking old patterns and building new ones.",
+            "This is your time to shine.",
+            "Discipline is doing what needs to be done, even when you don't feel like it. You're nailing it.",
+            "You're investing in your best self.",
+            "One habit at a time. You're unstoppable.",
+            "Your dedication is inspiring.",
+            "You're stronger today than yesterday.",
+            "Keep building. The best version of you is coming.",
+            "You're proving to yourself what you're capable of.",
+            "This moment of effort creates future moments of ease.",
+            "You're exactly where you need to be.",
+            "Your commitment is your superpower.",
+            "Every check-in is a step toward greatness.",
+            "You're not perfect, but you're consistent. That's what matters.",
+            "Your future self is proud of you right now.",
+            "You're creating a life you love, piece by piece.",
+            "Success starts with showing up. You're doing it.",
+            "You're building a stronger version of yourself.",
+            "This is the power of small, consistent actions.",
+            "You're exactly the kind of person who follows through.",
+            "Keep going. The breakthrough is coming.",
+            "Your habits are your highest form of self-respect.",
+            "You're not just tracking habits—you're transforming your life.",
+            "Today's effort is tomorrow's advantage.",
+            "You're unstoppable when you believe in yourself.",
+            "Every day you show up is a victory.",
+            "You're building momentum. Feel it.",
+            "This is what greatness looks like.",
+            "You're creating the life of your dreams, one day at a time.",
+            "Your consistency is your competitive edge.",
+            "You're stronger than any excuse.",
+            "Keep pushing. You're so close.",
+            "You're not just going through the motions. You're transforming.",
+            "Your effort today is your success tomorrow.",
+            "You're proving that dreams are achievable.",
+            "This is your power. Own it.",
+            "You're building a better version of yourself, right now.",
+            "Every completed habit is proof of your strength.",
+            "You're exactly where champions are made.",
+            "Your dedication is changing everything.",
+            "You're not waiting for the perfect time. You're making it now.",
+            "Keep going. You're worth it.",
+            "Your habits are your love letter to yourself.",
+            "You're building a life of purpose and power.",
+            "This moment is yours. Make it count.",
+            "You're stronger than yesterday, weaker than tomorrow. Keep growing.",
+            "Your consistency is building your legacy.",
+            "You're exactly the kind of person who succeeds.",
+            "Keep showing up. That's the secret.",
+            "You're creating magic through small, daily actions.",
+            "Your future is being built right now.",
+            "You're not just building habits—you're building confidence.",
+            "Every check-in is proof that you care about yourself.",
+            "You're unstoppable. Never forget that.",
+            "This is your moment. Seize it.",
+            "You're becoming unstoppable, one day at a time.",
+            "Your effort is never wasted.",
+            "You're exactly where you chose to be.",
+            "Keep going. The best is yet to come.",
+            "You're building a life that excites you.",
+            "Your commitment is unbreakable.",
+            "You're creating your own success story.",
+            "Every habit is a promise to yourself.",
+            "You're stronger, smarter, better than you were yesterday.",
+            "This is what self-love in action looks like.",
+            "You're exactly the kind of person who wins.",
+            "Your consistency is your greatest asset.",
+            "Keep pushing. You're so close to breakthrough.",
+            "You're building something that will last forever.",
+            "Your effort is planting seeds for your future.",
+            "You're not just tracking habits. You're reclaiming your power."
+        ];
+
+        // App State
+        let habits = [];
+        let completions = {};
+        let currentTab = 'home-tab';
+        let currentDate = new Date();
+        let calendarDate = new Date();
+        let currentEditingHabitId = null;
+        let currentCompletingHabitId = null;
+        let notificationsEnabled = true;
+        let theme = 'system';
+        let userName = '';
+        let recentMotivations = [];
+
+        // App State
+        let habits = [];
+        let completions = {};
+        let currentTab = 'home-tab';
+        let currentDate = new Date();
+        let calendarDate = new Date();
+        let currentEditingHabitId = null;
+        let currentCompletingHabitId = null;
+        let notificationsEnabled = true;
+        let theme = 'system';
+        let userName = '';
+        let recentMotivations = [];
+
+        // Initialize
+        function init() {
+            loadData();
+            initTheme();
+            renderHome();
+            updateTodayDate();
+            setDefaultDateRange();
+            setupNotifications();
+        }
+
+        // Data Management
+        function loadData() {
+            const stored = localStorage.getItem('momentum-data');
+            if (stored) {
+                const data = JSON.parse(stored);
+                habits = data.habits || [];
+                completions = data.completions || {};
+                notificationsEnabled = data.notificationsEnabled !== false;
+                theme = data.theme || 'system';
+                userName = data.userName || '';
+                recentMotivations = data.recentMotivations || [];
+            }
+        }
+
+        function saveData() {
+            const data = {
+                habits,
+                completions,
+                notificationsEnabled,
+                theme,
+                userName,
+                recentMotivations
+            };
+            localStorage.setItem('momentum-data', JSON.stringify(data));
+        }
+
+        // Tab Navigation
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+            currentTab = tabId;
+
+            if (tabId === 'home-tab') {
+                renderHome();
+            } else if (tabId === 'calendar-tab') {
+                renderCalendar();
+            } else if (tabId === 'progress-tab') {
+                updateProgressInsights();
+            }
+        }
+
+        // Home Tab
+        function updateTodayDate() {
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            const dateStr = currentDate.toLocaleDateString('en-US', options);
+            const greeting = getPersonalizedGreeting();
+            document.getElementById('today-date').textContent = greeting + ' • ' + dateStr;
+        }
+
+        function getPersonalizedGreeting() {
+            const hour = currentDate.getHours();
+            const name = userName ? `, ${userName}` : '';
+            
+            if (hour < 12) {
+                return '🌅 Good morning' + name;
+            } else if (hour < 18) {
+                return '☀️ Good afternoon' + name;
+            } else {
+                return '🌙 Good evening' + name;
+            }
+        }
+
+        function getRandomMotivation() {
+            // Filter out recently used phrases to avoid repetition
+            const availablePhrases = motivationalPhrases.filter(phrase => !recentMotivations.includes(phrase));
+            
+            // If we've used all phrases, reset the recent list
+            if (availablePhrases.length === 0) {
+                recentMotivations = [];
+                return getRandomMotivation();
+            }
+            
+            const randomPhrase = availablePhrases[Math.floor(Math.random() * availablePhrases.length)];
+            recentMotivations.push(randomPhrase);
+            
+            // Keep only the last 60 used phrases to allow variety
+            if (recentMotivations.length > 60) {
+                recentMotivations.shift();
+            }
+            
+            return randomPhrase;
+        }
+
+        function renderHome() {
+            const container = document.getElementById('habits-container');
+            const empty = document.getElementById('empty-home');
+            const motivationBanner = document.getElementById('motivation-banner');
+
+            // Show personalized motivation banner
+            if (userName && habits.length > 0) {
+                const basePhrase = getRandomMotivation();
+                const personalizedMotivation = `${userName}, ${basePhrase.charAt(0).toLowerCase() + basePhrase.slice(1)}`;
+                document.getElementById('motivation-text').textContent = personalizedMotivation;
+                motivationBanner.style.display = 'block';
+            } else if (habits.length > 0) {
+                const basePhrase = getRandomMotivation();
+                document.getElementById('motivation-text').textContent = basePhrase;
+                motivationBanner.style.display = 'block';
+            } else {
+                motivationBanner.style.display = 'none';
+            }
+
+            if (habits.length === 0) {
+                container.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'grid';
+            empty.style.display = 'none';
+
+            container.innerHTML = habits.map(habit => {
+                const completedToday = isHabitCompletedToday(habit.id);
+                const momentum = calculateMomentum(habit.id);
+                const lastDays = getLastDays(habit.id, 7);
+                const categoryColor = getCategoryColor(habit);
+
+                return `
+                    <div class="habit-card ${completedToday ? 'completed' : ''}" onclick="openCompleteModal('${habit.id}')">
+                        <div class="completion-indicator ${completedToday ? 'completed' : ''}" style="background: ${categoryColor}22; color: ${categoryColor};">
+                            ${completedToday ? '✓' : ''}
+                        </div>
+                        <div class="habit-info" style="flex: 1;">
+                            <h3 class="habit-name">${escapeHtml(habit.name)}</h3>
+                            <div class="habit-meta">
+                                <span style="padding: 4px 8px; background: ${categoryColor}20; color: ${categoryColor}; border-radius: 6px; font-size: 12px; font-weight: 500;">${habit.category}</span>
+                                <span class="habit-momentum ${momentum}">${momentum}</span>
+                            </div>
+                            ${habit.goalType === 'numeric' ? `<div class="habit-meta">Goal: ${habit.goalAmount} ${habit.goalUnit}</div>` : ''}
+                        </div>
+                        <button class="habit-button ${completedToday ? 'completed' : ''}" onclick="event.stopPropagation(); openCompleteModal('${habit.id}')" style="background: ${completedToday ? categoryColor : 'var(--color-primary)'};">
+                            ${completedToday ? 'Done' : 'Log'}
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function isHabitCompletedToday(habitId) {
+            const today = getDateKey(currentDate);
+            return completions[habitId]?.[today] ? true : false;
+        }
+
+        function getDateKey(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        // Momentum Calculation (Strong, Stable, Slipping, Recovering)
+        function calculateMomentum(habitId) {
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return 'stable';
+
+            const lastDays = getLastDays(habitId, 14);
+            const completed = lastDays.filter(c => c).length;
+            const recentDays = getLastDays(habitId, 7);
+            const recentCompleted = recentDays.filter(c => c).length;
+
+            // Strong: 6+ out of last 7 days
+            if (recentCompleted >= 6) {
+                return 'strong';
+            }
+
+            // Recovering: 4-5 out of last 7, with upward trend
+            if (recentCompleted >= 4 && recentCompleted > completed / 2) {
+                return 'recovering';
+            }
+
+            // Slipping: 2-3 out of last 7
+            if (recentCompleted >= 2 && recentCompleted < 4) {
+                return 'slipping';
+            }
+
+            // Stable: 4-5 out of last 7
+            if (recentCompleted >= 4) {
+                return 'stable';
+            }
+
+            // Otherwise recovering if any recent activity
+            if (recentCompleted > 0) {
+                return 'recovering';
+            }
+
+            return 'stable';
+        }
+
+        function getLastDays(habitId, days) {
+            const result = [];
+            for (let i = 0; i < days; i++) {
+                const date = new Date(currentDate);
+                date.setDate(date.getDate() - i);
+                const key = getDateKey(date);
+                result.unshift(completions[habitId]?.[key] ? true : false);
+            }
+            return result;
+        }
+
+        function getCategoryColor(habit) {
+            if (typeof habit === 'string') {
+                const categoryMap = {
+                    'health': 'rgba(255, 100, 70, 1)',
+                    'learning': 'rgba(50, 130, 220, 1)',
+                    'productivity': 'rgba(140, 50, 220, 1)',
+                    'mindfulness': 'rgba(20, 180, 160, 1)',
+                    'creativity': 'rgba(240, 80, 160, 1)',
+                };
+                return categoryMap[habit] || 'rgba(60, 200, 80, 1)';
+            }
+            if (habit.categoryColor) {
+                return habit.categoryColor;
+            }
+            const categoryMap = {
+                'health': 'rgba(255, 100, 70, 1)',
+                'learning': 'rgba(50, 130, 220, 1)',
+                'productivity': 'rgba(140, 50, 220, 1)',
+                'mindfulness': 'rgba(20, 180, 160, 1)',
+                'creativity': 'rgba(240, 80, 160, 1)',
+            };
+            return categoryMap[habit.category] || 'rgba(60, 200, 80, 1)';
+        }
+
+        // Modal Functions
+        function openAddHabitModal(habitId = null) {
+            const modal = document.getElementById('habit-modal');
+            const form = document.getElementById('habit-form');
+            const title = document.getElementById('modal-title');
+
+            form.reset();
+            currentEditingHabitId = habitId;                if (habitId) {
+                title.textContent = 'Edit Habit';
+                const habit = habits.find(h => h.id === habitId);
+                if (habit) {
+                    document.getElementById('habit-name').value = habit.name;
+                    const predefinedCategories = ['health', 'learning', 'productivity', 'mindfulness', 'creativity'];
+                    if (predefinedCategories.includes(habit.category)) {
+                        document.getElementById('habit-category').value = habit.category;
+                        document.getElementById('habit-custom-category').value = '';
+                    } else {
+                        document.getElementById('habit-category').value = 'other';
+                        document.getElementById('habit-custom-category').value = habit.category;
+                        document.getElementById('habit-custom-color').value = habit.categoryColor || 'rgba(60, 200, 80, 1)';
+                        setTimeout(() => setDefaultColorPicker(), 10);
+                    }
+                    document.getElementById('habit-frequency').value = habit.frequency;
+                    document.getElementById('habit-goal-type').value = habit.goalType;
+                    if (habit.goalType === 'numeric') {
+                        document.getElementById('habit-goal-amount').value = habit.goalAmount;
+                        document.getElementById('habit-goal-unit').value = habit.goalUnit;
+                    }
+                    if (habit.frequency === 'custom-days' && habit.customDays) {
+                        habit.customDays.forEach(day => {
+                            const dayElement = document.getElementById(`day-${['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][day]}`);
+                            if (dayElement) dayElement.checked = true;
+                        });
+                    }
+                    if (habit.frequency === 'custom-number' && habit.customNumber) {
+                        document.getElementById('habit-custom-number').value = habit.customNumber;
+                    }
+                }
+            } else {
+                title.textContent = 'Add Habit';
+            }
+
+            updateFrequencyUI();
+            updateGoalTypeUI();
+            updateCategoryUI();
+            modal.classList.add('active');
+        }
+
+        function closeAddHabitModal() {
+            document.getElementById('habit-modal').classList.remove('active');
+            currentEditingHabitId = null;
+        }
+
+        function updateFrequencyUI() {
+            const frequency = document.getElementById('habit-frequency').value;
+            const customDaysDiv = document.getElementById('custom-days');
+            const customNumberDiv = document.getElementById('custom-number-days');
+            customDaysDiv.style.display = frequency === 'custom-days' ? 'block' : 'none';
+            customNumberDiv.style.display = frequency === 'custom-number' ? 'block' : 'none';
+        }
+
+        function updateGoalTypeUI() {
+            const goalType = document.getElementById('habit-goal-type').value;
+            const numericGoal = document.getElementById('numeric-goal');
+            numericGoal.style.display = goalType === 'numeric' ? 'block' : 'none';
+        }
+
+        function updateCategoryUI() {
+            const category = document.getElementById('habit-category').value;
+            const customCategoryDiv = document.getElementById('custom-category');
+            customCategoryDiv.style.display = category === 'other' ? 'block' : 'none';
+            if (category === 'other') {
+                document.getElementById('habit-custom-color').value = 'rgba(60, 200, 80, 1)';
+                setDefaultColorPicker();
+            }
+        }
+
+        function selectCategoryColor(button, color) {
+            document.querySelectorAll('.color-picker').forEach(b => b.classList.remove('selected'));
+            button.classList.add('selected');
+            document.getElementById('habit-custom-color').value = color;
+        }
+
+        function setDefaultColorPicker() {
+            document.querySelectorAll('.color-picker').forEach(b => {
+                b.classList.remove('selected');
+                if (b.style.background === 'rgba(60, 200, 80, 1)') {
+                    b.classList.add('selected');
+                }
+            });
+        }
+
+        function saveHabit(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('habit-name').value;
+            let category = document.getElementById('habit-category').value;
+            if (category === 'other') {
+                const customCategory = document.getElementById('habit-custom-category').value.trim();
+                if (!customCategory) {
+                    alert('Please enter a custom category name');
+                    return;
+                }
+                category = customCategory;
+            }
+            const frequency = document.getElementById('habit-frequency').value;
+            const goalType = document.getElementById('habit-goal-type').value;
+
+            let customDays = [];
+            let customNumber = null;
+            if (frequency === 'custom-days') {
+                const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+                customDays = days
+                    .map((day, idx) => document.getElementById(`day-${day}`).checked ? idx : null)
+                    .filter(d => d !== null);
+            } else if (frequency === 'custom-number') {
+                customNumber = parseInt(document.getElementById('habit-custom-number').value);
+            }
+
+            if (currentEditingHabitId) {
+                const habit = habits.find(h => h.id === currentEditingHabitId);
+                if (habit) {
+                    habit.name = name;
+                    habit.category = category;
+                    habit.frequency = frequency;
+                    habit.customDays = customDays;
+                    habit.customNumber = customNumber;
+                    habit.goalType = goalType;
+                    const customColor = category === 'other' || !['health', 'learning', 'productivity', 'mindfulness', 'creativity'].includes(category)
+                        ? document.getElementById('habit-custom-color').value
+                        : null;
+                    habit.categoryColor = customColor;
+                    if (goalType === 'numeric') {
+                        habit.goalAmount = parseFloat(document.getElementById('habit-goal-amount').value);
+                        habit.goalUnit = document.getElementById('habit-goal-unit').value;
+                    }
+                }
+            } else {
+                const customColor = category === 'other' || !['health', 'learning', 'productivity', 'mindfulness', 'creativity'].includes(category) 
+                    ? document.getElementById('habit-custom-color').value 
+                    : null;
+                const newHabit = {
+                    id: 'h-' + Date.now(),
+                    name,
+                    category,
+                    frequency,
+                    customDays,
+                    customNumber,
+                    goalType,
+                    goalAmount: goalType === 'numeric' ? parseFloat(document.getElementById('habit-goal-amount').value) : 0,
+                    goalUnit: goalType === 'numeric' ? document.getElementById('habit-goal-unit').value : '',
+                    categoryColor: customColor,
+                    createdAt: getDateKey(new Date())
+                };
+                habits.push(newHabit);
+            }
+
+            saveData();
+            closeAddHabitModal();
+            renderHome();
+        }
+
+        function openCompleteModal(habitId) {
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return;
+
+            document.getElementById('complete-modal-title').textContent = habit.name;
+            currentCompletingHabitId = habitId;
+
+            const numericInput = document.getElementById('numeric-input');
+            const numericLabel = document.getElementById('numeric-label');
+
+            if (habit.goalType === 'numeric') {
+                numericInput.style.display = 'block';
+                numericLabel.textContent = `${habit.name} (${habit.goalUnit})`;
+            } else {
+                numericInput.style.display = 'none';
+            }
+
+            document.getElementById('completion-note').value = '';
+            document.getElementById('completion-amount').value = '';
+
+            document.getElementById('complete-modal').classList.add('active');
+        }
+
+        function closeCompleteModal() {
+            document.getElementById('complete-modal').classList.remove('active');
+            currentCompletingHabitId = null;
+        }
+
+        function confirmCompletion(event) {
+            event.preventDefault();
+
+            const habitId = currentCompletingHabitId;
+            const habit = habits.find(h => h.id === habitId);
+            if (!habit) return;
+
+            const today = getDateKey(currentDate);
+            const note = document.getElementById('completion-note').value;
+            const amount = habit.goalType === 'numeric' ? parseFloat(document.getElementById('completion-amount').value) : null;
+
+            if (!completions[habitId]) {
+                completions[habitId] = {};
+            }
+
+            completions[habitId][today] = {
+                completed: true,
+                note,
+                amount,
+                timestamp: new Date().toISOString()
+            };
+
+            saveData();
+            closeCompleteModal();
+            renderHome();
+        }
+
+        // Calendar Tab
+        function renderCalendar() {
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth();
+
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('calendar-month-year').textContent = `${monthNames[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+
+            const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayHeaders.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day other-month';
+                grid.appendChild(emptyDay);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('button');
+                const date = new Date(year, month, day);
+                const dateKey = getDateKey(date);
+                const today = getDateKey(currentDate);
+
+                let status = 'missed';
+                let completedCount = 0;
+                let totalHabitsScheduled = 0;
+
+                habits.forEach(habit => {
+                    if (isHabitScheduledForDate(habit, date)) {
+                        totalHabitsScheduled++;
+                        if (completions[habit.id]?.[dateKey]) {
+                            completedCount++;
+                        }
+                    }
+                });
+
+                if (totalHabitsScheduled > 0 && completedCount === totalHabitsScheduled) {
+                    status = 'completed';
+                }
+
+                dayElement.className = `calendar-day ${status}`;
+                if (dateKey === today) dayElement.classList.add('today');
+                dayElement.textContent = day;
+                dayElement.onclick = () => showDayDetail(date);
+                grid.appendChild(dayElement);
+            }
+        }
+
+        function isHabitScheduledForDate(habit, date) {
+            if (habit.frequency === 'daily') return true;
+            if (habit.frequency === 'weekly') return true;
+            if (habit.frequency === 'monthly') return true;
+            if (habit.frequency === 'yearly') return true;
+            if (habit.frequency === 'custom-days') {
+                return habit.customDays.includes(date.getDay());
+            }
+            if (habit.frequency === 'custom-number') {
+                return true;
+            }
+            return false;
+        }
+
+        function showDayDetail(date) {
+            const dateKey = getDateKey(date);
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            const dateStr = date.toLocaleDateString('en-US', options);
+
+            const dayDetail = document.getElementById('day-detail');
+            let html = `
+                <div class="day-detail">
+                    <div class="day-detail-title">${dateStr}</div>
+                    <div class="day-habits">
+            `;
+
+            const scheduledHabits = habits.filter(h => isHabitScheduledForDate(h, date));
+
+            if (scheduledHabits.length === 0) {
+                html += '<p style="text-align: center; color: var(--color-text-secondary); margin: var(--space-16) 0;">No habits scheduled</p>';
+            } else {
+                scheduledHabits.forEach(habit => {
+                    const completed = completions[habit.id]?.[dateKey];
+                    const status = completed ? 'completed' : 'missed';
+                    html += `
+                        <div class="day-habit-item ${status}">
+                            <div>
+                                <div>${escapeHtml(habit.name)}</div>
+                                ${completed?.note ? `<div class="day-habit-note">"${escapeHtml(completed.note)}"</div>` : ''}
+                            </div>
+                            <div>${completed ? '✓' : '-'}</div>
+                        </div>
+                    `;
+                });
+            }
+
+            html += `
+                    </div>
+                </div>
+            `;
+
+            dayDetail.innerHTML = html;
+            dayDetail.style.display = 'block';
+        }
+
+        function previousMonth() {
+            calendarDate.setMonth(calendarDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            calendarDate.setMonth(calendarDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        // Progress Tab
+        function setDefaultDateRange() {
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today);
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+
+            const formatDate = (date) => date.toISOString().split('T')[0];
+            document.getElementById('date-start').value = formatDate(thirtyDaysAgo);
+            document.getElementById('date-end').value = formatDate(today);
+        }
+
+        function updateProgressInsights() {
+            const startStr = document.getElementById('date-start').value;
+            const endStr = document.getElementById('date-end').value;
+
+            if (!startStr || !endStr) return;
+
+            const startDate = new Date(startStr);
+            const endDate = new Date(endStr);
+
+            renderProgressInsights(startDate, endDate, false);
+        }
+
+        function showAllTimeInsights() {
+            let earliestDate = new Date();
+            habits.forEach(habit => {
+                if (habit.createdAt) {
+                    const created = new Date(habit.createdAt);
+                    if (created < earliestDate) {
+                        earliestDate = created;
+                    }
+                }
+            });
+
+            renderProgressInsights(earliestDate, new Date(), true);
+        }
+
+        function renderProgressInsights(startDate, endDate, isAllTime) {
+            const insights = document.getElementById('progress-insights');
+            let html = `<div class="insights-section">`;
+
+            if (isAllTime) {
+                html += `<div class="insights-title">All-Time Insights</div>`;
+            } else {
+                const options = { month: 'short', day: 'numeric' };
+                const startStr = startDate.toLocaleDateString('en-US', options);
+                const endStr = endDate.toLocaleDateString('en-US', options);
+                html += `<div class="insights-title">Insights: ${startStr} - ${endStr}</div>`;
+            }
+
+            const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+            // Consistency percentage
+            let totalCompleted = 0;
+            let totalScheduled = 0;
+            const dailyConsistency = [];
+
+            for (let i = 0; i < days; i++) {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                const dateKey = getDateKey(date);
+
+                let dayCompleted = 0;
+                let dayScheduled = 0;
+
+                habits.forEach(habit => {
+                    if (isHabitScheduledForDate(habit, date)) {
+                        dayScheduled++;
+                        totalScheduled++;
+                        if (completions[habit.id]?.[dateKey]) {
+                            dayCompleted++;
+                            totalCompleted++;
+                        }
+                    }
+                });
+
+                if (dayScheduled > 0) {
+                    dailyConsistency.push(Math.round((dayCompleted / dayScheduled) * 100));
+                }
+            }
+
+            const consistency = totalScheduled > 0 ? Math.round((totalCompleted / totalScheduled) * 100) : 0;
+
+            // Overall consistency circular indicator
+            html += `
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="consistency-circle" style="--consistency-percent: ${consistency}%;">
+                        <div class="consistency-circle-text">
+                            <div class="consistency-circle-percent">${consistency}%</div>
+                            <div class="consistency-circle-label">Overall</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Consistency over time line chart
+            html += `<div class="chart-title">Consistency Over Time</div>`;
+            html += `<div class="line-chart-container" id="line-chart-${Date.now()}"></div>`;
+
+            // Habit completion rates bar chart
+            html += `<div class="chart-title">Habit Completion Rates</div><div class="bar-chart">`;
+
+            habits.forEach(habit => {
+                let habitCompleted = 0;
+                let habitScheduled = 0;
+
+                for (let i = 0; i < days; i++) {
+                    const date = new Date(startDate);
+                    date.setDate(date.getDate() + i);
+                    const dateKey = getDateKey(date);
+
+                    if (isHabitScheduledForDate(habit, date)) {
+                        habitScheduled++;
+                        if (completions[habit.id]?.[dateKey]) {
+                            habitCompleted++;
+                        }
+                    }
+                }
+
+                const rate = habitScheduled > 0 ? (habitCompleted / habitScheduled) * 100 : 0;
+                const barHeight = Math.max(10, rate);
+
+                html += `
+                    <div class="bar">
+                        <div class="bar-fill" style="height: ${barHeight}%;"></div>
+                        <div class="bar-label">${habit.name.substring(0, 3)}</div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+
+            // Momentum trend visualization
+            html += `<div class="chart-title">Momentum Trend</div><div class="momentum-chart" id="momentum-chart-${Date.now()}">`;
+
+            const momentumData = [];
+            const chunkSize = Math.max(1, Math.floor(days / 14)); // Show max 14 data points
+            for (let i = 0; i < days; i += chunkSize) {
+                const date = new Date(startDate);
+                date.setDate(date.getDate() + i);
+                const momentum = calculateDayMomentum(date);
+                momentumData.push(momentum);
+            }
+
+            momentumData.forEach((momentum, idx) => {
+                const heightPercent = momentum === 'strong' ? 100 : momentum === 'stable' ? 75 : momentum === 'recovering' ? 50 : 25;
+                html += `
+                    <div class="momentum-bar">
+                        <div class="momentum-fill ${momentum}" style="height: ${heightPercent}%;"></div>
+                        <div class="momentum-label">${idx * chunkSize}</div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            html += `</div>`;
+
+            insights.innerHTML = html;
+
+            // Render line chart after DOM insertion
+            setTimeout(() => {
+                const chartId = 'line-chart-' + Date.now().toString().slice(-5);
+                renderLineChart(dailyConsistency, chartId);
+            }, 10);
+        }
+
+        function calculateDayMomentum(date) {
+            let completedCount = 0;
+            let scheduledCount = 0;
+
+            habits.forEach(habit => {
+                if (isHabitScheduledForDate(habit, date)) {
+                    scheduledCount++;
+                    const dateKey = getDateKey(date);
+                    if (completions[habit.id]?.[dateKey]) {
+                        completedCount++;
+                    }
+                }
+            });
+
+            if (scheduledCount === 0) return 'stable';
+
+            const rate = completedCount / scheduledCount;
+            if (rate >= 0.85) return 'strong';
+            if (rate >= 0.6) return 'stable';
+            if (rate >= 0.3) return 'recovering';
+            return 'slipping';
+        }
+
+        function renderLineChart(data, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container || data.length === 0) return;
+
+            const canvas = document.createElement('canvas');
+            canvas.className = 'line-chart-canvas';
+            canvas.width = container.offsetWidth * 2;
+            canvas.height = container.offsetHeight * 2;
+            container.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 40;
+
+            // Draw grid and axes
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.font = '24px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+            ctx.textAlign = 'center';
+
+            // Draw horizontal grid lines
+            for (let i = 0; i <= 100; i += 25) {
+                const y = height - padding - (i / 100) * (height - 2 * padding);
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+                ctx.fillText(i + '%', padding / 2, y + 8);
+            }
+
+            // Draw line chart
+            if (data.length > 0) {
+                const pointSpacing = (width - 2 * padding) / Math.max(1, data.length - 1);
+                
+                ctx.strokeStyle = 'rgba(50, 130, 220, 1)';
+                ctx.lineWidth = 6;
+                ctx.lineJoin = 'round';
+                ctx.lineCap = 'round';
+
+                ctx.beginPath();
+                data.forEach((value, idx) => {
+                    const x = padding + idx * pointSpacing;
+                    const y = height - padding - (value / 100) * (height - 2 * padding);
+                    if (idx === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                ctx.stroke();
+
+                // Draw points
+                ctx.fillStyle = 'rgba(50, 130, 220, 1)';
+                data.forEach((value, idx) => {
+                    const x = padding + idx * pointSpacing;
+                    const y = height - padding - (value / 100) * (height - 2 * padding);
+                    ctx.beginPath();
+                    ctx.arc(x, y, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Draw point labels
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+                ctx.font = '20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                data.forEach((value, idx) => {
+                    if (data.length <= 10 || idx % Math.floor(data.length / 5) === 0) {
+                        const x = padding + idx * pointSpacing;
+                        const y = height - padding - (value / 100) * (height - 2 * padding);
+                        ctx.fillText(value + '%', x, y - 30);
+                    }
+                });
+            }
+
+            // Scale canvas for high DPI
+            container.style.transform = 'scale(0.5)';
+            container.style.transformOrigin = 'top left';
+        }
+
+        // Settings
+        function toggleTheme() {
+            const isDark = document.documentElement.style.colorScheme === 'dark';
+            if (isDark) {
+                document.documentElement.style.colorScheme = 'light';
+                theme = 'light';
+            } else {
+                document.documentElement.style.colorScheme = 'dark';
+                theme = 'dark';
+            }
+            updateThemeToggle();
+            saveData();
+        }
+
+        function initTheme() {
+            updateThemeToggle();
+            loadUserName();
+        }
+
+        function updateThemeToggle() {
+            const toggle = document.getElementById('theme-toggle');
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (isDark) {
+                toggle.classList.add('active');
+            } else {
+                toggle.classList.remove('active');
+            }
+        }
+
+        function loadUserName() {
+            document.getElementById('user-name-input').value = userName;
+        }
+
+        function saveUserName() {
+            userName = document.getElementById('user-name-input').value.trim();
+            saveData();
+            updateTodayDate();
+            renderHome();
+        }
+
+        function toggleNotifications() {
+            notificationsEnabled = !notificationsEnabled;
+            document.getElementById('notification-toggle').classList.toggle('active');
+            saveData();
+        }
+
+        function exportData() {
+            const data = {
+                habits,
+                completions,
+                exportedAt: new Date().toISOString()
+            };
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `momentum-export-${getDateKey(new Date())}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function confirmClearData() {
+            if (confirm('Are you sure? This will delete all habits and data. This cannot be undone.')) {
+                habits = [];
+                completions = {};
+                saveData();
+                renderHome();
+            }
+        }
+
+        // Notifications
+        function setupNotifications() {
+            if ('Notification' in window && notificationsEnabled) {
+                if (Notification.permission === 'granted') {
+                    scheduleNotifications();
+                } else if (Notification.permission !== 'denied') {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            scheduleNotifications();
+                        }
+                    });
+                }
+            }
+        }
+
+        function scheduleNotifications() {
+            const now = new Date();
+            const next8am = new Date();
+            next8am.setHours(8, 0, 0, 0);
+
+            if (now > next8am) {
+                next8am.setDate(next8am.getDate() + 1);
+            }
+
+            const timeUntil8am = next8am - now;
+
+            setTimeout(() => {
+                if (notificationsEnabled) {
+                    const notificationBody = userName 
+                        ? `${userName}, time to check in on your habits. You've got this!`
+                        : 'Time to check in on your habits. You have got this.';
+                    
+                    new Notification('Momentum', {
+                        body: notificationBody,
+                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%2350a0b4"/><text x="50" y="65" font-size="50" fill="white" text-anchor="middle" font-weight="bold">M</text></svg>'
+                    });
+                }
+                scheduleNotifications();
+            }, timeUntil8am);
+        }
+
+        // Utility
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Start App
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
